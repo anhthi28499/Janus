@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15-alpine
+    container_name: janus-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - janus_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: janus-chroma
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - janus_chromadb_data:/chroma/chroma
+
+  backend:
+    image: ghcr.io/anhthi28499/janus-backend:latest
+    container_name: janus-backend
+    restart: always
+    environment:
+      - FLASK_APP=src/app.py
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - PINECONE_ENV=${PINECONE_ENV}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "5000:5000"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    image: ghcr.io/anhthi28499/janus-frontend:latest
+    container_name: janus-frontend
+    restart: always
+    environment:
+      - NUXT_PUBLIC_API_BASE=http://localhost:5000/api/v1
+    ports:
+      - "3000:3000"
+
+volumes:
+  janus_postgres_data:
+  janus_chromadb_data:
