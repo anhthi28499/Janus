@@ -1,5 +1,9 @@
 .PHONY: help build up down restart logs ps clean install
 
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
 help:
 	@echo "Janus AI Agent Makefile commands:"
 	@echo "  make up         Start all services via Docker Compose in detached mode"
@@ -12,12 +16,18 @@ help:
 	@echo "  make install    Install local dependencies (Node modules and Python venv if needed locally)"
 
 build:
-	docker-compose build
+	docker compose -f docker-compose.dev.yml build
 
 up-db:
-	docker-compose up -d database
+	docker compose -f docker-compose.dev.yml up -d database chromadb
 
-dev-be: up-db
+down-db:
+	docker compose -f docker-compose.dev.yml rm -s -f database chromadb
+
+down:
+	docker compose -f docker-compose.dev.yml down
+
+dev-be:
 	@echo "Starting Backend natively..."
 	cd BE && . venv/bin/activate && flask run --host=0.0.0.0 --port=5000
 
@@ -31,16 +41,16 @@ dev:
 	@echo "Terminal 2: make dev-fe"
 
 logs:
-	docker-compose logs -f
+	docker compose -f docker-compose.dev.yml logs -f
 
 ps:
-	docker-compose ps
+	docker compose -f docker-compose.dev.yml ps
 
 clean:
-	docker-compose down -v --rmi all --remove-orphans
+	docker compose -f docker-compose.dev.yml down -v --rmi all --remove-orphans
 
 install:
 	@echo "Installing FE dependencies..."
 	cd FE && npm install
 	@echo "Installing BE dependencies (requires python3 and venv)..."
-	cd BE && python3 -m venv venv && . venv/bin/activate && pip install -r requirements.txt
+	cd BE && python3 -m venv venv && . venv/bin/activate && pip install --upgrade pip setuptools && pip install -e ".[dev]"
