@@ -1,6 +1,8 @@
 import uuid
-from repositories.models import ChatSession, ChatMessage
+
 from core.database import db
+from repositories.models import ChatMessage, ChatSession
+
 
 class ChatRepository:
     def create_session(self):

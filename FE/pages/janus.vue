@@ -11,7 +11,7 @@
           <div>
             <h2 class="text-lg font-bold text-white leading-tight">Janus Agent</h2>
             <div class="text-xs text-green-400 flex items-center gap-1">
-              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online
+              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"/> Online
             </div>
           </div>
         </div>
@@ -21,7 +21,7 @@
       </div>
 
       <!-- Messages Area -->
-      <div class="messages-area flex-1 overflow-y-auto p-6 space-y-6" ref="messagesContainer">
+      <div ref="messagesContainer" class="messages-area flex-1 overflow-y-auto p-6 space-y-6">
         <div v-if="messages.length === 0" class="h-full flex flex-col items-center justify-center text-gray-500 opacity-70">
           <svg class="w-16 h-16 mb-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -52,9 +52,9 @@
         <div v-if="isLoading" class="message-row flex w-full justify-start">
           <div class="message-bubble bg-surface-light border border-gray-700 rounded-2xl rounded-tl-sm p-4 w-24">
             <div class="flex space-x-2 justify-center items-center h-4">
-              <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0s"></div>
-              <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-              <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+              <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0s"/>
+              <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"/>
+              <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"/>
             </div>
           </div>
         </div>
@@ -62,14 +62,14 @@
 
       <!-- Input Area -->
       <div class="input-area p-4 border-t border-gray-800 bg-surface">
-        <form @submit.prevent="sendMessage" class="flex gap-2 relative">
+        <form class="flex gap-2 relative" @submit.prevent="sendMessage">
           <input 
             v-model="inputQuery" 
             type="text" 
             class="flex-1 bg-background border border-gray-700 text-white rounded-full py-3 pl-6 pr-12 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-inner"
             placeholder="Ask Janus anything..."
             :disabled="isLoading"
-          />
+          >
           <button 
             type="submit" 
             class="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-primary hover:bg-primary-hover flex items-center justify-center text-white transition-colors"

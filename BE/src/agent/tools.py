@@ -1,8 +1,9 @@
-from langchain.tools import tool
 import datetime
-import pytz
 import os
-import requests
+
+import pytz
+from langchain.tools import tool
+
 
 @tool
 def time_tool(timezone: str = "UTC") -> str:
@@ -32,7 +33,7 @@ def calendar_tool(action: str, event_details: str = "") -> str:
 @tool
 def messenger_tool(message: str, recipient: str) -> str:
     """Send a message to a user via Messenger."""
-    # Integration placeholder 
+    # Integration placeholder
     return f"Message sent to {recipient}: {message}"
 
 @tool

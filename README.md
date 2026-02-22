@@ -38,6 +38,22 @@ make dev-fe
 - App will be running at `http://localhost:3000`
 - API lives at `http://localhost:5000/api/v1`
 
+## Code Quality & Git Hooks
+We use `pre-commit` for global Git hooks, **Ruff** for Python backend, and **ESLint/Prettier** for the Nuxt frontend. 
+
+Ensure you set up your local hooks before committing to the repository:
+```bash
+make setup-hooks
+```
+You can manually run the linters and formatters using the provided Makefile commands:
+```bash
+# To run linters (Ruff and ESLint) without modifying files
+make lint
+
+# To run formatters (Ruff format and Prettier)
+make format
+```
+
 ## Running Tests
 Run the entire testing suite (unit & integration) globally:
 ```bash

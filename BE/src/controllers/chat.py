@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, request
+
 from services.chat_service import ChatService
 
 chat_bp = Blueprint('chat_bp', __name__)
@@ -9,10 +10,10 @@ def send_message():
     data = request.json or {}
     message = data.get('message')
     session_id = data.get('session_id')
-    
+
     if not message:
         return jsonify({"error": "Message is required"}), 400
-        
+
     result = chat_service.chat(session_id, message)
     return jsonify(result)
 

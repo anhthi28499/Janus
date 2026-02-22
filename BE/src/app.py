@@ -1,8 +1,9 @@
-import os
 from flask import Flask
 from flask_cors import CORS
+
 from core.config import Config
 from core.database import init_db
+
 
 def create_app():
     app = Flask(__name__)
@@ -19,10 +20,10 @@ def create_app():
     setup_logging(app)
 
     # Blueprint registration
-    from controllers.knowledgebase import kb_bp
-    from controllers.evaluation import eval_bp
     from controllers.chat import chat_bp
-    
+    from controllers.evaluation import eval_bp
+    from controllers.knowledgebase import kb_bp
+
     app.register_blueprint(kb_bp, url_prefix='/api/v1/knowledgebase')
     app.register_blueprint(eval_bp, url_prefix='/api/v1/evaluation')
     app.register_blueprint(chat_bp, url_prefix='/api/v1/chat')

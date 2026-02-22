@@ -4,6 +4,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   srcDir: '.',
   devtools: { enabled: true },
+  modules: ['@nuxt/eslint'],
+  eslint: {
+    config: {
+      stylistic: false // Use prettier for formatting
+    }
+  },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {

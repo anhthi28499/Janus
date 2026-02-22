@@ -9,13 +9,13 @@ class EvaluationService:
         score = {"precision": 0.85, "recall": 0.90, "f1": 0.87}
         result = repo.save_result("retrieval", score)
         return {"message": "Retrieval evaluation completed", "metrics": score, "id": result.id}
-        
+
     def evaluate_generation(self, data: dict):
         # Placeholder for generation evaluation logic
         score = {"bleu": 0.45, "rougeL": 0.60, "faithfulness": 0.92}
         result = repo.save_result("generation", score)
         return {"message": "Generation evaluation completed", "metrics": score, "id": result.id}
-        
+
     def evaluate_e2e(self, data: dict):
         # Placeholder for End-to-End evaluation logic
         score = {"answer_relevancy": 0.88, "context_precision": 0.82}

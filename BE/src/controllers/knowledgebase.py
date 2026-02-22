@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, request
+
 from services.kb_service import KnowledgebaseService
 
 kb_bp = Blueprint('kb_bp', __name__)

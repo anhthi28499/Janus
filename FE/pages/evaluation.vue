@@ -42,33 +42,33 @@
           <div v-if="activeMode === 'retrieval'" class="space-y-4">
             <div class="form-group">
               <label class="form-label">Evaluation Dataset (JSON/CSV)</label>
-              <input type="file" class="form-input text-sm" />
+              <input type="file" class="form-input text-sm" >
             </div>
             <div class="form-group">
               <label class="form-label">Query Sample</label>
-              <textarea class="form-input h-24" placeholder="Enter a sample query to test retrieval logic..."></textarea>
+              <textarea class="form-input h-24" placeholder="Enter a sample query to test retrieval logic..."/>
             </div>
           </div>
 
           <div v-else-if="activeMode === 'generation'" class="space-y-4">
             <div class="form-group">
               <label class="form-label">Context</label>
-              <textarea class="form-input h-24" placeholder="Paste context here..."></textarea>
+              <textarea class="form-input h-24" placeholder="Paste context here..."/>
             </div>
             <div class="form-group">
               <label class="form-label">Question</label>
-              <input type="text" class="form-input" placeholder="What is the question?" />
+              <input type="text" class="form-input" placeholder="What is the question?" >
             </div>
             <div class="form-group">
               <label class="form-label">Generated Answer</label>
-              <textarea class="form-input h-24" placeholder="Paste the LLM generated answer..."></textarea>
+              <textarea class="form-input h-24" placeholder="Paste the LLM generated answer..."/>
             </div>
           </div>
 
           <div v-else class="space-y-4">
             <div class="form-group">
               <label class="form-label">Evaluation Name</label>
-              <input type="text" class="form-input" placeholder="e.g., Weekly E2E Test" />
+              <input type="text" class="form-input" placeholder="e.g., Weekly E2E Test" >
             </div>
             <p class="text-sm text-gray-400 mb-4">
               End-to-end evaluation will run the entire graph (Planner -> Searcher -> Doer) using the configured test suite.
@@ -78,9 +78,9 @@
           <!-- Common Actions -->
           <div class="mt-8 flex items-center justify-between">
             <button 
-              @click="runEvaluation" 
-              class="btn btn-primary px-8 py-2"
+              class="btn btn-primary px-8 py-2" 
               :disabled="isEvaluating"
+              @click="runEvaluation"
             >
               {{ isEvaluating ? 'Evaluating...' : 'Run Evaluation' }}
             </button>

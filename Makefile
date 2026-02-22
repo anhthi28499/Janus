@@ -54,3 +54,19 @@ install:
 	cd FE && npm install
 	@echo "Installing BE dependencies (requires python3 and venv)..."
 	cd BE && python3 -m venv venv && . venv/bin/activate && pip install --upgrade pip setuptools && pip install -e ".[dev]"
+
+setup-hooks:
+	@echo "Setting up Git Hooks..."
+	cd BE && . venv/bin/activate && pre-commit install
+
+lint:
+	@echo "Linting Backend..."
+	cd BE && . venv/bin/activate && ruff check .
+	@echo "Linting Frontend..."
+	cd FE && npm run lint
+
+format:
+	@echo "Formatting Backend..."
+	cd BE && . venv/bin/activate && ruff format .
+	@echo "Formatting Frontend..."
+	cd FE && npm run format

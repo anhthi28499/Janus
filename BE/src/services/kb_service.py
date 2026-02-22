@@ -1,5 +1,5 @@
+
 from repositories.kb_repository import KnowledgebaseRepository
-import os
 
 repo = KnowledgebaseRepository()
 
@@ -22,5 +22,5 @@ class KnowledgebaseService:
         for doc in docs:
             if doc.status == 'uploaded':
                 repo.update_status(doc.id, 'indexed')
-        
+
         return {"message": "Knowledgebase training completed successfully", "config_used": config_data}
