@@ -65,7 +65,11 @@ install:
 
 setup-hooks:
 	@echo "Setting up Git Hooks..."
-	cd apps/backend && . venv/bin/activate && pre-commit install -c ../../pre-commit/pre-commit-config.yaml
+	@if [ ! -f apps/backend/venv/bin/pre-commit ]; then \
+		echo "pre-commit not found. Run 'make install' first."; \
+		exit 1; \
+	fi
+	cd apps/backend && ./venv/bin/pre-commit install -c ../../pre-commit/pre-commit-config.yaml
 
 lint:
 	@echo "Linting Backend..."
