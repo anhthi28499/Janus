@@ -65,18 +65,20 @@ install:
 
 setup-hooks:
 	@echo "Setting up Git Hooks..."
-	cd apps/backend && . venv/bin/activate && pre-commit install
+	cd apps/backend && . venv/bin/activate && pre-commit install -c ../../pre-commit/pre-commit-config.yaml
 
 lint:
 	@echo "Linting Backend..."
 	cd apps/backend && . venv/bin/activate && ruff check .
-	@echo "Linting Frontend..."
+	@echo "Linting Frontend (web)..."
 	cd apps/web && npm run lint
+	@echo "Linting Mobile..."
+	cd apps/mobile && npm run lint
 
 format:
 	@echo "Formatting Backend..."
 	cd apps/backend && . venv/bin/activate && ruff format .
-	@echo "Formatting Frontend..."
+	@echo "Formatting Frontend (web)..."
 	cd apps/web && npm run format
 
 test-be-unit:

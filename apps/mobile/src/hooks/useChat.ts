@@ -34,7 +34,7 @@ export function useChat() {
           setSessionId(newId);
           await AsyncStorage.setItem(SESSION_KEY, newId);
         }
-      } catch (e) {
+      } catch {
         const newId = generateSessionId();
         setSessionId(newId);
         await AsyncStorage.setItem(SESSION_KEY, newId);
@@ -66,7 +66,7 @@ export function useChat() {
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch (err) {
+    } catch {
       const errorMsg: Message = {
         role: 'assistant',
         content: 'Sorry, I encountered an error communicating with the server.',

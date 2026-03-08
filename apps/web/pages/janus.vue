@@ -2,8 +2,8 @@
   <div class="page-container relative flex h-screen w-full flex-col items-center justify-center bg-background overflow-hidden font-sans">
     
     <!-- Background Accents -->
-    <div class="absolute -top-[20%] -left-[10%] h-[70vw] w-[70vw] rounded-full bg-primary/10 blur-[120px] pointer-events-none"></div>
-    <div class="absolute -bottom-[20%] -right-[10%] h-[60vw] w-[60vw] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none"></div>
+    <div class="absolute -top-[20%] -left-[10%] h-[70vw] w-[70vw] rounded-full bg-primary/10 blur-[120px] pointer-events-none"/>
+    <div class="absolute -bottom-[20%] -right-[10%] h-[60vw] w-[60vw] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none"/>
 
     <div class="z-10 flex w-full max-w-5xl flex-col h-[90vh] md:my-6 md:rounded-3xl border border-white/5 bg-surface/80 backdrop-blur-2xl shadow-2xl shadow-black/50 overflow-hidden transform transition-all">
       
@@ -12,14 +12,14 @@
         <div class="flex items-center gap-4">
           <div class="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-purple-600 font-bold text-white shadow-lg shadow-primary/20 ring-1 ring-white/10 overflow-hidden">
             <span class="text-xl tracking-tight relative z-10">J</span>
-            <div class="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity duration-300"/>
           </div>
           <div>
             <h2 class="text-lg font-semibold tracking-wide text-white">Janus AI</h2>
             <div class="flex items-center gap-2 text-xs font-medium text-emerald-400">
               <span class="relative flex h-2 w-2">
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"/>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"/>
               </span>
               Connected
             </div>
@@ -68,9 +68,9 @@
 
         <div v-if="isLoading" class="message-row flex w-full justify-start animate-fade-in">
           <div class="flex items-center gap-1.5 rounded-3xl rounded-tl-sm border border-white/5 bg-surface-light/50 backdrop-blur-sm px-5 py-4 shadow-xl">
-            <div class="h-2 w-2 animate-bounce rounded-full bg-primary/60" style="animation-delay: 0s"></div>
-            <div class="h-2 w-2 animate-bounce rounded-full bg-primary/60" style="animation-delay: 0.2s"></div>
-            <div class="h-2 w-2 animate-bounce rounded-full bg-primary/60" style="animation-delay: 0.4s"></div>
+            <div class="h-2 w-2 animate-bounce rounded-full bg-primary/60" style="animation-delay: 0s"/>
+            <div class="h-2 w-2 animate-bounce rounded-full bg-primary/60" style="animation-delay: 0.2s"/>
+            <div class="h-2 w-2 animate-bounce rounded-full bg-primary/60" style="animation-delay: 0.4s"/>
           </div>
         </div>
       </div>
@@ -79,16 +79,16 @@
       <div class="relative border-t border-white/5 bg-surface/60 p-4 md:p-6 backdrop-blur-xl">
         <form class="relative flex items-end gap-3" @submit.prevent="sendMessage">
           <div class="relative flex-1 group">
-            <div class="absolute -inset-0.5 rounded-3xl bg-gradient-to-r from-primary to-purple-600 opacity-20 blur transition duration-500 group-hover:opacity-50 group-focus-within:opacity-100" v-if="!isLoading"></div>
+            <div v-if="!isLoading" class="absolute -inset-0.5 rounded-3xl bg-gradient-to-r from-primary to-purple-600 opacity-20 blur transition duration-500 group-hover:opacity-50 group-focus-within:opacity-100"/>
             <textarea 
               v-model="inputQuery" 
               rows="1"
-              @keydown.enter.prevent="sendMessage"
               class="relative w-full resize-none rounded-3xl border border-white/10 bg-background/80 px-6 py-4 pr-14 text-[15px] text-white placeholder-gray-500 shadow-inner backdrop-blur-sm focus:border-white/20 focus:outline-none focus:ring-0 transition-all custom-scrollbar"
               placeholder="Message Janus..."
               :disabled="isLoading"
               style="min-height: 56px; max-height: 150px;"
-            ></textarea>
+              @keydown.enter.prevent="sendMessage"
+            />
           </div>
           <button 
             type="submit" 
