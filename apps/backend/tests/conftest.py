@@ -3,7 +3,7 @@ import os
 import sys
 
 # Ensure src is in the python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../BE/src')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 from app import create_app
 from core.database import db

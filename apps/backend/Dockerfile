@@ -8,10 +8,12 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY pyproject.toml .
+COPY src/ ./src/
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -e .
 
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+ENV PYTHONPATH=/app/src
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "src.app:create_app"]

@@ -9,7 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@janus/shared": "file:../shared",
+    "@janus/shared": "file:../../packages/shared",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "expo": "~55.0.5",
     "expo-status-bar": "~55.0.4",

@@ -5,16 +5,12 @@ Janus is a modern, full-stack LangGraph-powered AI Agent designed to securely in
 ## Architecture & Structure
 This repository represents a Monorepo containing the Nuxt 3 Frontend, Flask Python Backend, and React Native (Expo) Mobile app.
 
-*   `BE/`: Python Backend (Flask, SQLAlchemy, LangGraph, Pinecone/Chroma)
-    *   `src/ controllers, middlewares, services, core, repositories, agent`
-*   `FE/`: NuxtJS Frontend (Vue 3, Vanilla CSS, Vitest)
-*   `mobile/`: React Native (Expo) Mobile app (Chat feature)
-*   `shared/`: Shared TypeScript package (types, API client) used by mobile and FE
-*   `tests/`: Unified Root Test Suite 
-    *   `BE/unit`, `BE/integration`
-    *   `FE/unit`, `FE/integration`
-*   `scripts/tests/`: Bash scripts to execute testing pipelines manually or via CI.
-*   `deploy/`: Deployment folder for remote `.env` execution and using GHCR images.
+*   `apps/backend/`: Python Backend (Flask, SQLAlchemy, LangGraph, Pinecone/Chroma)
+*   `apps/web/`: NuxtJS Frontend (Vue 3, Tailwind, Vitest)
+*   `apps/mobile/`: React Native (Expo) Mobile app
+*   `packages/shared/`: Shared TypeScript package (types, API client) for web & mobile
+*   Tests live inside each app: `apps/backend/tests/`, `apps/web/tests/`
+*   `infra/docker/`: Docker Compose for dev & production deployment
 
 ## Prerequisites
 1.  **Node.js** (v18+)
@@ -23,6 +19,9 @@ This repository represents a Monorepo containing the Nuxt 3 Frontend, Flask Pyth
 4.  Copy `.env.example` to `.env` and fill in necessary keys.
 
 ## Quick Start (Development)
+
+> **After directory restructure:** Run `make install` to recreate the Python venv and reinstall npm workspaces.
+
 The local development environment uses `Makefile` to quickly spawn the database backend alongside your raw Native code without needing constant Docker image rebuilds. 
 
 > Note: All Environment Variables MUST be defined in `.env` as the compose files do not contain fallbacks anymore.
@@ -31,13 +30,16 @@ The local development environment uses `Makefile` to quickly spawn the database 
 # 1. First time setup: Generate virtual environments and install all NPM/Pip dependencies
 make install
 
-# 2. Start PostgreSQL & Local ChromaDB via Docker, and launch the Backend natively
+# 2. Start PostgreSQL & ChromaDB via Docker (optional for DB-dependent features)
+make up-db
+
+# 3. Launch Backend (in a separate terminal)
 make dev-be
 
-# 3. (In a separate terminal) Launch Frontend natively
+# 4. Launch Frontend (in another terminal)
 make dev-fe
 
-# 4. (Optional) Launch Mobile app (Expo)
+# 5. (Optional) Launch Mobile app (Expo)
 make dev-mobile
 ```
 - Web app at `http://localhost:3000`
@@ -61,10 +63,10 @@ make format
 ```
 
 ## Running Tests
-Run the entire testing suite (unit & integration) globally:
 ```bash
-./scripts/tests/test_all.sh
+make test-all
+# Or individually: make test-be-unit, make test-be-integration, make test-fe-unit
 ```
 
 ## Production Deployment
-Please read the [deploy/README.md](./deploy/README.md) file to see how to spin up Janus via GitHub Container Registry images.
+See [infra/docker/README.md](./infra/docker/README.md) for deployment using GitHub Container Registry images.
