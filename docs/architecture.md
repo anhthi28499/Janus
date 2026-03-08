@@ -25,6 +25,24 @@ Janus/
 │   ├── package-lock.json         # Lockfile phiên bản thư viện
 │   └── tsconfig.json             # Cấu hình TypeScript
 │
+├── mobile/                       # Ứng dụng Mobile (React Native / Expo)
+│   ├── src/
+│   │   ├── screens/              # Các màn hình (ChatScreen, v.v.)
+│   │   ├── components/           # UI components (MessageBubble, ChatInput)
+│   │   ├── hooks/                # Custom hooks (useChat)
+│   │   └── constants/            # Theme, cấu hình
+│   ├── App.tsx                   # Component gốc
+│   ├── app.json                  # Cấu hình Expo
+│   ├── metro.config.js           # Cấu hình Metro cho monorepo
+│   └── package.json
+│
+├── shared/                       # Package dùng chung (FE + Mobile)
+│   ├── src/
+│   │   ├── types/                # Message, ChatResponse, v.v.
+│   │   ├── api/                  # sendMessage, getHistory
+│   │   └── constants.ts          # getApiBase
+│   └── package.json              # @janus/shared
+│
 ├── deploy/                       # Cấu hình triển khai dự án (Deployment)
 │   ├── docker-compose.yml        # Tệp cấu hình chạy Docker compose (Môi trường Production)
 │   ├── .env.example              # Mẫu file .env cho deploy

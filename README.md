@@ -3,11 +3,13 @@
 Janus is a modern, full-stack LangGraph-powered AI Agent designed to securely interact, retrieve context from Vector DBs, schedule, check the weather, and evaluate its own generation logic.
 
 ## Architecture & Structure
-This repository represents a Monorepo containing both the Nuxt 3 Frontend and Flask Python Backend.
+This repository represents a Monorepo containing the Nuxt 3 Frontend, Flask Python Backend, and React Native (Expo) Mobile app.
 
 *   `BE/`: Python Backend (Flask, SQLAlchemy, LangGraph, Pinecone/Chroma)
     *   `src/ controllers, middlewares, services, core, repositories, agent`
 *   `FE/`: NuxtJS Frontend (Vue 3, Vanilla CSS, Vitest)
+*   `mobile/`: React Native (Expo) Mobile app (Chat feature)
+*   `shared/`: Shared TypeScript package (types, API client) used by mobile and FE
 *   `tests/`: Unified Root Test Suite 
     *   `BE/unit`, `BE/integration`
     *   `FE/unit`, `FE/integration`
@@ -34,9 +36,13 @@ make dev-be
 
 # 3. (In a separate terminal) Launch Frontend natively
 make dev-fe
+
+# 4. (Optional) Launch Mobile app (Expo)
+make dev-mobile
 ```
-- App will be running at `http://localhost:3000`
-- API lives at `http://localhost:5000/api/v1`
+- Web app at `http://localhost:3000`
+- API at `http://localhost:5000/api/v1`
+- Mobile: run `make dev-mobile`, then scan QR code with Expo Go. Set `EXPO_PUBLIC_API_BASE` to your machine IP when using a physical device.
 
 ## Code Quality & Git Hooks
 We use `pre-commit` for global Git hooks, **Ruff** for Python backend, and **ESLint/Prettier** for the Nuxt frontend. 

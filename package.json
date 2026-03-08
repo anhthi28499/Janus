@@ -1,0 +1,5 @@
+{
+  "name": "janus",
+  "private": true,
+  "workspaces": ["FE", "mobile", "shared"]
+}

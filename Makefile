@@ -14,6 +14,7 @@ help:
 	@echo "  make ps         List running services"
 	@echo "  make clean      Stop and remove containers, networks, images, and volumes"
 	@echo "  make install    Install local dependencies (Node modules and Python venv if needed locally)"
+	@echo "  make dev-mobile Start Expo mobile app (React Native)"
 
 build:
 	docker compose -f docker-compose.dev.yml build
@@ -35,10 +36,15 @@ dev-fe:
 	@echo "Starting Frontend natively..."
 	cd FE && npm run dev
 
+dev-mobile:
+	@echo "Starting Mobile (Expo) natively..."
+	cd mobile && npx expo start
+
 dev:
-	@echo "To run development environment, please open two terminals."
+	@echo "To run development environment, please open separate terminals."
 	@echo "Terminal 1: make dev-be"
 	@echo "Terminal 2: make dev-fe"
+	@echo "Terminal 3 (optional): make dev-mobile"
 
 logs:
 	docker compose -f docker-compose.dev.yml logs -f
@@ -50,8 +56,8 @@ clean:
 	docker compose -f docker-compose.dev.yml down -v --rmi all --remove-orphans
 
 install:
-	@echo "Installing FE dependencies..."
-	cd FE && npm install
+	@echo "Installing Node dependencies (FE, mobile, shared)..."
+	npm install
 	@echo "Installing BE dependencies (requires python3 and venv)..."
 	cd BE && python3 -m venv venv && . venv/bin/activate && pip install --upgrade pip setuptools && pip install -e ".[dev]"
 
