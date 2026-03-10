@@ -2,6 +2,7 @@
 name = "janus-agent"
 version = "0.1.0"
 description = "Janus AI Agent Backend"
+requires-python = ">=3.10"
 dependencies = [
     "flask==3.0.2",
     "flask-cors==4.0.0",
@@ -11,7 +12,12 @@ dependencies = [
     "langchain-openai==0.1.1",
     "langchain-pinecone==0.0.3",
     "langgraph==0.0.30",
-    "pinecone-client==3.2.2",
+    "pinecone>=5.0.0,<8.0.0",
+    "llama-index-core>=0.12.0,<0.15",
+    "llama-index-vector-stores-pinecone>=0.3.0",
+    "llama-index-embeddings-openai>=0.2.0",
+    "llama-index-readers-file>=0.2.0",
+    "pypdf>=4.0.0",
     "python-dotenv==1.0.1",
     "gunicorn==21.2.0",
     "requests==2.31.0",

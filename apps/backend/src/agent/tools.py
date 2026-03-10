@@ -15,6 +15,7 @@ def time_tool(timezone: str = "UTC") -> str:
     except Exception as e:
         return f"Error: Invalid timezone '{timezone}'. {str(e)}"
 
+
 @tool
 def weather_tool(location: str) -> str:
     """Get the current weather for a specific location."""
@@ -24,11 +25,13 @@ def weather_tool(location: str) -> str:
     # Integration placeholder
     return f"The weather in {location} is currently sunny and 25°C."
 
+
 @tool
 def calendar_tool(action: str, event_details: str = "") -> str:
-    """Manage Google Calendar events. action can be 'list' or 'create'. event_details specify title/time."""
+    """Manage Google Calendar events. action: 'list' or 'create'; event_details: title/time."""
     # Integration placeholder
     return f"Calendar action '{action}' executed successfully."
+
 
 @tool
 def messenger_tool(message: str, recipient: str) -> str:
@@ -36,17 +39,30 @@ def messenger_tool(message: str, recipient: str) -> str:
     # Integration placeholder
     return f"Message sent to {recipient}: {message}"
 
+
 @tool
 def rag_search_tool(query: str) -> str:
     """Search the knowledge base (Pinecone) for relevant context."""
-    # Pinecone logic placeholder
-    # from langchain_pinecone import PineconeVectorStore
-    # from langchain_openai import OpenAIEmbeddings
-    # embeddings = OpenAIEmbeddings()
-    # vectorstore = PineconeVectorStore(index_name="janus-kb", embedding=embeddings)
-    # docs = vectorstore.similarity_search(query)
-    # return "\n".join([doc.page_content for doc in docs])
-    return f"Search results from Knowledgebase for: {query}"
+    try:
+        from services.vector_store_service import retrieve
+
+        results = retrieve(query)
+        if not results:
+            return "No relevant documents found in the knowledge base."
+        parts = []
+        for i, r in enumerate(results, 1):
+            content = r.get("content", "")
+            score = r.get("score")
+            meta = r.get("metadata", {})
+            source = meta.get("filename", meta.get("file_path", "unknown"))
+            line = f"[{i}] (Source: {source})\n{content}"
+            if score is not None:
+                line = f"[{i}] (Score: {score:.3f}, Source: {source})\n{content}"
+            parts.append(line)
+        return "\n\n---\n\n".join(parts)
+    except Exception as e:
+        return f"Knowledge base search failed: {e}"
+
 
 def get_tools():
     """Return a list of all available agent tools."""

@@ -1,12 +1,12 @@
 <template>
   <div class="page-container relative flex h-screen w-full flex-col items-center justify-center bg-background overflow-hidden font-sans">
-    
+
     <!-- Background Accents -->
     <div class="absolute -top-[20%] -left-[10%] h-[70vw] w-[70vw] rounded-full bg-primary/10 blur-[120px] pointer-events-none"/>
     <div class="absolute -bottom-[20%] -right-[10%] h-[60vw] w-[60vw] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none"/>
 
     <div class="z-10 flex w-full max-w-5xl flex-col h-[90vh] md:my-6 md:rounded-3xl border border-white/5 bg-surface/80 backdrop-blur-2xl shadow-2xl shadow-black/50 overflow-hidden transform transition-all">
-      
+
       <!-- Chat Header -->
       <div class="chat-header relative flex items-center justify-between border-b border-white/5 bg-surface/40 px-6 py-4 backdrop-blur-md">
         <div class="flex items-center gap-4">
@@ -43,21 +43,35 @@
           <p class="max-w-sm text-sm text-gray-400 leading-relaxed">I am your intelligent assistant. Let's explore ideas, solve problems, or chat about anything.</p>
         </div>
 
-        <div 
-          v-for="(msg, idx) in messages" 
-          :key="idx" 
+        <div
+          v-for="(msg, idx) in messages"
+          :key="idx"
           class="message-row flex w-full animate-fade-in"
           :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
           :style="{ animationDelay: `${idx * 50}ms` }"
         >
-          <div 
+          <div
             class="group relative max-w-[85%] md:max-w-[75%] px-5 py-4 text-[15px] leading-relaxed shadow-xl transition-all duration-300 hover:shadow-2xl"
-            :class="msg.role === 'user' 
-              ? 'bg-gradient-to-br from-primary to-primary-hover text-white rounded-3xl rounded-tr-sm shadow-primary/20' 
+            :class="msg.role === 'user'
+              ? 'bg-gradient-to-br from-primary to-primary-hover text-white rounded-3xl rounded-tr-sm shadow-primary/20'
               : 'bg-surface-light/80 backdrop-blur-sm text-gray-100 border border-white/5 rounded-3xl rounded-tl-sm shadow-black/20'"
           >
             <div class="whitespace-pre-wrap">{{ msg.content }}</div>
-            <div 
+            <div v-if="msg.role === 'assistant' && msg.sources?.length" class="mt-3 pt-3 border-t border-white/10">
+              <div class="text-[11px] font-semibold text-emerald-400/90 mb-2">Sources</div>
+              <div class="space-y-1.5">
+                <div
+                  v-for="(src, si) in msg.sources"
+                  :key="si"
+                  class="text-xs text-gray-400 rounded-md bg-black/20 px-2 py-1.5 truncate"
+                  :title="src.content"
+                >
+                  <span class="text-gray-500">{{ (src.filename || src.file_path || 'Document') }}</span>
+                  <span v-if="src.score != null" class="ml-1 text-emerald-500/80">({{ typeof src.score === 'number' ? src.score.toFixed(2) : src.score }})</span>
+                </div>
+              </div>
+            </div>
+            <div
               class="mt-2 text-[11px] font-medium tracking-wide opacity-50 group-hover:opacity-100 transition-opacity"
               :class="msg.role === 'user' ? 'text-right text-primary-100' : 'text-left text-gray-500'"
             >
@@ -80,8 +94,8 @@
         <form class="relative flex items-end gap-3" @submit.prevent="sendMessage">
           <div class="relative flex-1 group">
             <div v-if="!isLoading" class="absolute -inset-0.5 rounded-3xl bg-gradient-to-r from-primary to-purple-600 opacity-20 blur transition duration-500 group-hover:opacity-50 group-focus-within:opacity-100"/>
-            <textarea 
-              v-model="inputQuery" 
+            <textarea
+              v-model="inputQuery"
               rows="1"
               class="relative w-full resize-none rounded-3xl border border-white/10 bg-background/80 px-6 py-4 pr-14 text-[15px] text-white placeholder-gray-500 shadow-inner backdrop-blur-sm focus:border-white/20 focus:outline-none focus:ring-0 transition-all custom-scrollbar"
               placeholder="Message Janus..."
@@ -90,8 +104,8 @@
               @keydown.enter.prevent="sendMessage"
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             class="relative mb-0.5 flex h-13 w-13 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-purple-600 text-white shadow-lg shadow-primary/30 transition-all duration-300 transform"
             :class="!inputQuery.trim() || isLoading ? 'opacity-50 cursor-not-allowed scale-95 grayscale-[50%]' : 'hover:scale-105 hover:shadow-primary/50 active:scale-95'"
             :disabled="!inputQuery.trim() || isLoading"
@@ -112,17 +126,16 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-const config = useRuntimeConfig()
+import { sendMessage as apiSendMessage, getHistory } from '@janus/shared'
 
 const sessionId = ref('')
 const messages = ref([])
 const inputQuery = ref('')
 const isLoading = ref(false)
-const messagesContainer = ref(null)
+const messagesContainer = ref<HTMLElement | null>(null)
 
 // Initialize Session
 onMounted(() => {
-  // Load session from local storage if exists
   const savedSession = localStorage.getItem('janus_session_id')
   if (savedSession) {
     sessionId.value = savedSession
@@ -135,8 +148,8 @@ onMounted(() => {
 
 const fetchHistory = async () => {
   try {
-    const res = await $fetch(`${config.public.apiBase}/chat/history/${sessionId.value}`)
-    if (res && res.messages) {
+    const res = await getHistory(sessionId.value)
+    if (res?.messages) {
       messages.value = res.messages
       scrollToBottom()
     }
@@ -149,36 +162,29 @@ const sendMessage = async () => {
   const q = inputQuery.value.trim()
   if (!q) return
 
-  // Optimistic UI update
   messages.value.push({ role: 'user', content: q, timestamp: new Date().toISOString() })
   inputQuery.value = ''
   isLoading.value = true
   scrollToBottom()
 
   try {
-    const res = await $fetch(`${config.public.apiBase}/chat/`, {
-      method: 'POST',
-      body: {
-        session_id: sessionId.value,
-        message: q
-      }
-    })
-    
-    // Server returns the new session ID and the AI response
+    const res = await apiSendMessage(sessionId.value || null, q)
     sessionId.value = res.session_id
     localStorage.setItem('janus_session_id', sessionId.value)
-    
-    messages.value.push({
+
+    const assistantMsg = {
       role: 'assistant',
       content: res.response,
-      timestamp: new Date().toISOString()
-    })
+      timestamp: new Date().toISOString(),
+      ...(res.sources?.length ? { sources: res.sources } : {}),
+    }
+    messages.value.push(assistantMsg)
   } catch (error) {
     console.error('Chat error', error)
     messages.value.push({
       role: 'assistant',
       content: 'Sorry, I encountered an error communicating with the server.',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
   } finally {
     isLoading.value = false

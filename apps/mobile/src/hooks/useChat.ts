@@ -65,6 +65,9 @@ export function useChat() {
         content: res.response,
         timestamp: new Date().toISOString(),
       };
+      if (res.sources?.length) {
+        assistantMsg.sources = res.sources;
+      }
       setMessages((prev) => [...prev, assistantMsg]);
     } catch {
       const errorMsg: Message = {

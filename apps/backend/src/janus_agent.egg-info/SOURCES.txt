@@ -27,3 +27,4 @@ src/services/__init__.py
 src/services/chat_service.py
 src/services/eval_service.py
 src/services/kb_service.py
+src/services/vector_store_service.py

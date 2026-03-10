@@ -3,7 +3,7 @@
     <!-- Sidebar: Docs -->
     <div class="sidebar p-4">
       <h2 class="text-xl font-bold mb-4 gradient-text">Documents</h2>
-      
+
       <div class="upload-section glass-panel p-4 rounded-lg mb-6">
         <h3 class="text-sm font-semibold mb-2">Upload File</h3>
         <input type="file" class="form-input text-sm mb-2" @change="onFileChange" >
@@ -11,7 +11,7 @@
           {{ isUploading ? 'Uploading...' : 'Upload' }}
         </button>
       </div>
-      
+
       <div class="list-section">
         <h3 class="text-sm font-semibold mb-2">Current Documents</h3>
         <div v-if="documents.length === 0" class="text-sm text-gray-400 italic">
@@ -37,12 +37,12 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
           </svg>
         </div>
-        
+
         <h2 class="text-2xl font-bold mb-2">Knowledge Base Core</h2>
         <p class="text-gray-400 mb-8">Process uploaded documents and update the vector database to make them searchable by Janus.</p>
-        
-        <button 
-          class="btn btn-primary pulse-btn w-full py-3 text-lg font-semibold rounded-lg" 
+
+        <button
+          class="btn btn-primary pulse-btn w-full py-3 text-lg font-semibold rounded-lg"
           :disabled="isTraining"
           @click="startTraining"
         >
@@ -55,9 +55,12 @@
             Processing...
           </span>
         </button>
-        
+
         <div v-if="trainResult" class="mt-4 p-3 rounded bg-green-900/30 text-green-400 text-sm border border-green-800/50">
           {{ trainResult.message }}
+          <span v-if="trainResult.processed != null || trainResult.failed != null" class="block mt-1 text-xs opacity-90">
+            Processed: {{ trainResult.processed ?? 0 }}, Failed: {{ trainResult.failed ?? 0 }}
+          </span>
         </div>
       </div>
     </div>
@@ -65,7 +68,7 @@
     <!-- Sidebar: System -->
     <div class="sidebar p-4 border-l border-r-0 border-gray-800">
       <h2 class="text-xl font-bold mb-4 gradient-text">System config</h2>
-      
+
       <div class="form-group mb-6">
         <label class="form-label">Vector Database</label>
         <select v-model="systemConfig.vectorDb" class="form-select">
@@ -75,7 +78,7 @@
         </select>
         <div class="text-xs text-gray-500 mt-1">Currently active: {{ systemConfig.vectorDb }}</div>
       </div>
-      
+
       <div class="form-group mb-6">
         <label class="form-label">Embedding Model</label>
         <select v-model="systemConfig.embeddingModel" class="form-select">
@@ -84,7 +87,7 @@
           <option value="bge-large-en-v1.5">BAAI/bge-large-en-v1.5</option>
         </select>
       </div>
-      
+
       <div class="glass-panel p-4 rounded-lg bg-indigo-900/10 border-indigo-500/20">
         <h3 class="text-sm font-semibold text-indigo-400 mb-2">Auto-Switching</h3>
         <p class="text-xs text-gray-400">Settings are automatically applied to the next training session.</p>
@@ -95,7 +98,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-const config = useRuntimeConfig()
+import {
+  listDocuments,
+  uploadDocument,
+  trainKnowledgebase,
+} from '@janus/shared'
 
 // State
 const documents = ref([])
@@ -106,13 +113,13 @@ const trainResult = ref(null)
 
 const systemConfig = ref({
   vectorDb: 'pinecone',
-  embeddingModel: 'text-embedding-3-small'
+  embeddingModel: 'text-embedding-3-small',
 })
 
 // Methods
 const fetchDocuments = async () => {
   try {
-    const res = await $fetch(`${config.public.apiBase}/knowledgebase/documents`)
+    const res = await listDocuments()
     documents.value = res.documents
   } catch (error) {
     console.error('Error fetching docs:', error)
@@ -120,27 +127,24 @@ const fetchDocuments = async () => {
 }
 
 const onFileChange = (e) => {
-  selectedFile.value = e.target.files[0]
+  selectedFile.value = e.target?.files?.[0] ?? null
 }
 
 const uploadFile = async () => {
   if (!selectedFile.value) return
-  
+
   isUploading.value = true
-  const formData = new FormData()
-  formData.append('file', selectedFile.value)
-  
   try {
-    await $fetch(`${config.public.apiBase}/knowledgebase/upload`, {
-      method: 'POST',
-      body: formData
-    })
+    await uploadDocument(selectedFile.value)
     selectedFile.value = null
-    // reset input
-    document.querySelector('input[type="file"]').value = ''
+    const input = document.querySelector('input[type="file"]')
+    if (input) input.value = ''
     await fetchDocuments()
   } catch (error) {
     console.error('Upload failed:', error)
+    trainResult.value = {
+      message: error instanceof Error ? error.message : 'Upload failed',
+    }
   } finally {
     isUploading.value = false
   }
@@ -149,24 +153,27 @@ const uploadFile = async () => {
 const startTraining = async () => {
   isTraining.value = true
   trainResult.value = null
-  
+
   try {
-    const res = await $fetch(`${config.public.apiBase}/knowledgebase/train`, {
-      method: 'POST',
-      body: {
-        vectorDb: systemConfig.value.vectorDb,
-        embeddingModel: systemConfig.value.embeddingModel
-      }
+    const res = await trainKnowledgebase({
+      vectorDb: systemConfig.value.vectorDb,
+      embeddingModel: systemConfig.value.embeddingModel,
     })
-    trainResult.value = res
-    await fetchDocuments() // Refresh statuses
+    trainResult.value = {
+      message: res.message,
+      processed: res.processed,
+      failed: res.failed,
+    }
+    await fetchDocuments()
   } catch (error) {
     console.error('Training failed:', error)
-    trainResult.value = { message: 'Training failed. See console for details.' }
+    trainResult.value = {
+      message: error instanceof Error ? error.message : 'Training failed. See console for details.',
+    }
   } finally {
     setTimeout(() => {
       isTraining.value = false
-    }, 1000) // Artificial delay for better UX
+    }, 1000)
   }
 }
 
@@ -175,7 +182,8 @@ const statusClass = (status) => {
   const base = 'text-xs px-2 py-1 rounded-full '
   if (status === 'indexed') return base + 'bg-green-900/50 text-green-400 border border-green-800'
   if (status === 'failed') return base + 'bg-red-900/50 text-red-400 border border-red-800'
-  return base + 'bg-blue-900/50 text-blue-400 border border-blue-800' // uploaded
+  if (status === 'processing') return base + 'bg-amber-900/50 text-amber-400 border border-amber-800'
+  return base + 'bg-blue-900/50 text-blue-400 border border-blue-800'
 }
 
 const formatDate = (isoString) => {

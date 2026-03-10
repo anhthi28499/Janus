@@ -28,6 +28,17 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         >
           {message.content}
         </Text>
+        {!isUser && message.sources?.length ? (
+          <View style={styles.sources}>
+            <Text style={styles.sourcesTitle}>Sources</Text>
+            {message.sources.map((src, i) => (
+              <Text key={i} style={styles.sourceItem} numberOfLines={1}>
+                {src.filename || src.file_path || 'Document'}
+                {src.score != null ? ` (${src.score.toFixed(2)})` : ''}
+              </Text>
+            ))}
+          </View>
+        ) : null}
         <Text
           style={[
             styles.timestamp,
@@ -89,5 +100,22 @@ const styles = StyleSheet.create({
   },
   timestampAssistant: {
     color: theme.textMuted,
+  },
+  sources: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+  },
+  sourcesTitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: theme.primary,
+    marginBottom: 6,
+  },
+  sourceItem: {
+    fontSize: 11,
+    color: theme.textMuted,
+    marginBottom: 2,
   },
 });
